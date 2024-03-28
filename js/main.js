@@ -59,9 +59,66 @@ function createShaderProgram(gl, vsSource, fsSource) {
     return program;
 }
 
+function dot(a, b) {
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+}
+
+function viewMatrix(u, v, n, r) {
+    return [
+        u[0],
+        u[1],
+        u[2],
+        -dot(u, r),
+        v[0],
+        v[1],
+        v[2],
+        -dot(v, r),
+        n[0],
+        n[1],
+        n[2],
+        -dot(n, r),
+        0,
+        0,
+        0,
+        1,
+    ];
+}
+
+function perspectiveMatrix(near, far, right, left, top, bottom) {
+    const P = [
+        [(2 * near) / (right - left), 0, (right + left) / (right - left), 0],
+        [0, (2 * near) / (top - bottom), (top + bottom) / (top - bottom), 0],
+        [0, 0, -(far + near) / (far - near), (-2 * far * near) / (far - near)],
+        [0, 0, -1, 0],
+    ];
+    return P;
+}
+
+// Example view and perspective matrices
+const u = [1, 0, 0];
+const v = [0, 1, 0];
+const n = [0, 0, 1];
+const r = [0, 0, 20];
+const viewMat = viewMatrix(u, v, n, r);
+
+const near = 44;
+const far = 45;
+const left = -10;
+const right = 10;
+const top1 = 10;
+const bottom = 10;
+const persMat = perspectiveMatrix(near, far, right, left, top1, bottom);
+
+function flattenMatrix(matrix) {
+    return matrix.reduce((acc, val) => acc.concat(val), []);
+}
+
+const flatViewMat = flattenMatrix(viewMat);
+const flatPersMat = flattenMatrix(persMat);
+
 async function initWebGL(gl) {
     try {
-        const data = await loadData("data/teapot.json");
+        const data = await loadData("data/teapot_hw3.json");
         //data processing
         let maxZ = -1;
         const vertex = [];
@@ -77,6 +134,7 @@ async function initWebGL(gl) {
             if (data.data[i].v2.v[2] > maxZ) maxZ = data.data[i].v2.v[2];
         }
 
+        // console.log(vertex);
         for (let i = 2; i < vertex.length; i += 6) vertex[i] = vertex[i] / maxZ;
 
         const vertexShaderSource = await fetchShader(
@@ -121,6 +179,25 @@ async function initWebGL(gl) {
             /**
              * Shader Attributes
              */
+            // Set these matrices as uniforms in your shader program
+            const viewMatrixLocation = gl.getUniformLocation(
+                shaderProgram,
+                "viewMatrix"
+            );
+            const perspectiveMatrixLocation = gl.getUniformLocation(
+                shaderProgram,
+                "perspectiveMatrix"
+            );
+            if (viewMatrixLocation < 0)
+                console.log(
+                    "Failed to get uniform location for...vertexPosition"
+                );
+            if (perspectiveMatrixLocation < 0)
+                console.log(
+                    "Failed to get uniform location for...normalPosition"
+                );
+            gl.uniformMatrix4fv(viewMatrixLocation, false, flatViewMat);
+            gl.uniformMatrix4fv(perspectiveMatrixLocation, false, flatPersMat);
             const vI = gl.getAttribLocation(shaderProgram, "vertexPosition");
             const nI = gl.getAttribLocation(shaderProgram, "normalPosition");
             if (vI < 0)
