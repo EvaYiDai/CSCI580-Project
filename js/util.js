@@ -43,11 +43,11 @@ const sca = (x, y, z) => {
 };
 const transpose = (x) => {
   return [
-    [x[0][0], x[0][1], x[0][2], x[0][3]],
-    [x[1][0], x[1][1], x[1][2], x[1][3]],
-    [x[2][0], x[2][1], x[2][2], x[2][3]],
-    [x[3][0], x[3][1], x[3][2], x[3][3]]
-  ]
+    [x[0][0], x[1][0], x[2][0], x[3][0]],
+    [x[0][1], x[1][1], x[2][1], x[3][1]],
+    [x[0][2], x[1][2], x[2][2], x[3][2]],
+    [x[0][3], x[1][3], x[2][3], x[3][3]]
+  ];
 };
 const cross = (a, b) => {
   return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
@@ -75,7 +75,7 @@ const t4 = (m1, m2) => {
    return t4result;
 };
 const flattenMatrix = (matrix) => {
-  return matrix.reduce((acc, val) => acc.concat(val), []);
+  return new Float32Array(matrix.reduce((acc, val) => acc.concat(val), []));
 };
 const mM = (rX, rY, rZ, sX, sY, sZ, tX, tY, tZ) => {
   let result = [
