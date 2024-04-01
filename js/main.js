@@ -122,7 +122,7 @@ async function initWebGL(gl) {
             const r = [0, 0, 20];
             const viewMat = vM(u, v, n, r);
 
-            const near = 10;
+            const near = 20;
             const far = 100;
             const left = -5;
             const right = 5;
