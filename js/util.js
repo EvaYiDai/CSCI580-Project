@@ -101,9 +101,9 @@ const pM = (near, far, left, right, bottom, top) => {
 };
 const vM = (u, v, n, r) => {
   return [
-    [u.x, u.y, u.z, -dot(u, r) ],
-    [v.x, v.y, v.z, -dot(v, r) ],
-    [n.x, n.y, n.z, -dot(n, r) ],
+    [u[0], u[1], u[2], -dot(u, r) ],
+    [v[0], v[1], v[2], -dot(v, r) ],
+    [n[0], n[1], n[2], -dot(n, r) ],
     [0, 0, 0, 1]
   ];
 };

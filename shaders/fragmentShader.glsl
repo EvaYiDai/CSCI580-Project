@@ -11,5 +11,5 @@ void main() {
   vec3 c2 = d2 * vec3(.95, .65, .88);
   vec3 c = c1*.99 + c2*.01;
 	o = vec4(c, 1.);
-	gl_FragDepth = fragDepth;
+	// gl_FragDepth = fragDepth;
 }
