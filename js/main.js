@@ -1,4 +1,16 @@
-import { transpose, cross, normalize, dot, det, clamp, t4, flattenMatrix, mM, pM, vM } from './util.js';
+import {
+    transpose,
+    cross,
+    normalize,
+    dot,
+    det,
+    clamp,
+    t4,
+    flattenMatrix,
+    mM,
+    pM,
+    vM,
+} from "./util.js";
 
 async function loadData(path) {
     const response = await fetch(path);
@@ -71,7 +83,7 @@ async function initWebGL(gl) {
             if (data.data[i].v2.v[2] > maxZ) maxZ = data.data[i].v2.v[2];
         }
 
-        for (let i = 2; i < vertex.length; i += 6) vertex[i] = vertex[i] / maxZ;
+        // for (let i = 2; i < vertex.length; i += 6) vertex[i] = vertex[i] / maxZ;
 
         const vertexShaderSource = await fetchShader(
             "shaders/vertexShader.glsl"
@@ -122,16 +134,17 @@ async function initWebGL(gl) {
             const r = [0, 0, 20];
             const viewMat = vM(u, v, n, r);
 
-            const near = 20;
-            const far = 100;
-            const left = -5;
-            const right = 5;
-            const bottom = -5;
-            const top = 5;
+            const near = 10;
+            const far = 65;
+            const left = -10;
+            const right = 10;
+            const bottom = -10;
+            const top = 10;
             const perspectiveMat = pM(near, far, left, right, bottom, top);
 
             const flatViewMat = flattenMatrix(viewMat);
             const flatPerspectiveMat = flattenMatrix(perspectiveMat);
+            console.log(flatPerspectiveMat);
 
             const viewMatrixLocation = gl.getUniformLocation(
                 shaderProgram,
@@ -150,7 +163,11 @@ async function initWebGL(gl) {
                     "Failed to get uniform location for...normalPosition"
                 );
             gl.uniformMatrix4fv(viewMatrixLocation, false, flatViewMat);
-            gl.uniformMatrix4fv(perspectiveMatrixLocation, false, flatPerspectiveMat);
+            gl.uniformMatrix4fv(
+                perspectiveMatrixLocation,
+                false,
+                flatPerspectiveMat
+            );
             const vI = gl.getAttribLocation(shaderProgram, "vertexPosition");
             const nI = gl.getAttribLocation(shaderProgram, "normalPosition");
             if (vI < 0)
@@ -164,14 +181,7 @@ async function initWebGL(gl) {
 
             const stride = 6 * Float32Array.BYTES_PER_ELEMENT;
             gl.enableVertexAttribArray(vI);
-            gl.vertexAttribPointer(
-                vI,
-                3,
-                gl.FLOAT,
-                false,
-                stride,
-                0
-            );
+            gl.vertexAttribPointer(vI, 3, gl.FLOAT, false, stride, 0);
             gl.enableVertexAttribArray(nI);
             gl.vertexAttribPointer(
                 nI,
