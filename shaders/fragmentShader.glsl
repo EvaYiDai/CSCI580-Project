@@ -15,5 +15,5 @@ void main() {
     vec3 scaledColor = dotp * baseColor;
 
     o = vec4(scaledColor, 1.0); 
-	// gl_FragDepth = fragDepth;
+		// gl_FragDepth = fragDepth;
 }

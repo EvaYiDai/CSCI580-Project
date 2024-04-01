@@ -75,9 +75,9 @@ async function initWebGL(gl) {
             vertex.push(...data.data[i].v0.v);
             vertex.push(...data.data[i].v0.n);
             vertex.push(...data.data[i].v1.v);
-            vertex.push(...data.data[i].v0.n);
+            vertex.push(...data.data[i].v1.n);
             vertex.push(...data.data[i].v2.v);
-            vertex.push(...data.data[i].v0.n);
+            vertex.push(...data.data[i].v2.n);
             if (data.data[i].v0.v[2] > maxZ) maxZ = data.data[i].v0.v[2];
             if (data.data[i].v1.v[2] > maxZ) maxZ = data.data[i].v1.v[2];
             if (data.data[i].v2.v[2] > maxZ) maxZ = data.data[i].v2.v[2];
@@ -135,7 +135,7 @@ async function initWebGL(gl) {
             const viewMat = vM(u, v, n, r);
 
             const near = 19;
-            const far = 100;
+            const far = 21;
             const left = -5;
             const right = 5;
             const bottom = -5;
