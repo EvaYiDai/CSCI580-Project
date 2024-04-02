@@ -82,7 +82,6 @@ async function initWebGL(gl) {
             if (data.data[i].v1.v[2] > maxZ) maxZ = data.data[i].v1.v[2];
             if (data.data[i].v2.v[2] > maxZ) maxZ = data.data[i].v2.v[2];
         }
-
         for (let i = 2; i < vertex.length; i += 6) vertex[i] = vertex[i] / maxZ;
 
         const vertexShaderSource = await fetchShader(
@@ -144,7 +143,6 @@ async function initWebGL(gl) {
 
             const flatViewMat = flattenMatrix(transpose(viewMat));
             const flatPerspectiveMat = flattenMatrix(transpose(perspectiveMat));
-            console.log(flatPerspectiveMat);
 
             const viewMatrixLocation = gl.getUniformLocation(
                 shaderProgram,
