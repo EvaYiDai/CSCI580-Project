@@ -65,7 +65,7 @@ function createShaderProgram(gl, vsSource, fsSource) {
     return program;
 }
 
-async function initWebGL(gl) {
+async function initWebGL(gl, from, to, left, right) {
     try {
         const data = await loadData("data/teapotHW5.json");
         //data processing
@@ -122,21 +122,17 @@ async function initWebGL(gl) {
              * Shader Attributes
              */
             // Example view and perspective matrices
-            const FROM = [3, 4, 12];
-            const TO = [0, 0, 0];
 
             const n = normalize(
-                FROM.map((item, index) => item - TO[index])
+                from.map((item, index) => item - to[index])
             );
             let u = normalize(cross([0, 1, 0], n));
             const v = cross(n, u);
-            const r = FROM;
+            const r = from;
             const viewMat = vM(u, v, n, r);
 
             const near = 3;
             const far = 20;
-            const left = -1;
-            const right = 1;
             const bottom = -1;
             const top = 1;
             const perspectiveMat = pM(near, far, left, right, bottom, top);
@@ -206,14 +202,21 @@ document.addEventListener("DOMContentLoaded", () => {
      * Canvas
      */
     //get canvas reference
-    const canvas = document.getElementById("glcanvas");
+    const canvas = document.getElementById("glcanvas_l");
+    const canvasR = document.getElementById("glcanvas_r");
     if (!canvas) {
+        console.log(
+            "Could not find HTML canvas element - check for typos, or loading JavaScript file too early"
+        );
+    }
+    if (!canvasR) {
         console.log(
             "Could not find HTML canvas element - check for typos, or loading JavaScript file too early"
         );
     }
     //get webGL2 reference
     const gl = canvas.getContext("webgl2");
+    const glR = canvasR.getContext("webgl2");
     if (!gl) {
         const isWebGl1Supported = !!document
             .createElement("canvas")
@@ -228,12 +231,43 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         }
     }
+    if (!glR) {
+        const isWebGl1Supported = !!document
+            .createElement("canvas")
+            .getContext("webgl");
+        if (isWebGl1Supported) {
+            console.log(
+                "WebGL 1 is supported, but not v2 - try using a different device or browser"
+            );
+        } else {
+            console.log(
+                "WebGL is not supported on this device - try using a different device or browser"
+            );
+        }
+    }
 
-    initWebGL(gl)
+    const fromL = [-0.3, 4, 15];
+    const toL = [0, 0, 0];
+    const leftL = -0.7;
+    const rightL = 1.3;
+
+    const fromR = [0.3, 4, 15];
+    const toR = [0, 0, 0];
+    const leftR = -1.3;
+    const rightR = 0.7;
+
+    initWebGL(gl, fromL, toL, leftL, rightL)
         .then(() => {
             console.log("WebGL initialization successful.");
         })
         .catch((error) => {
             console.error("Error during WebGL initialization:", error);
         });
+    initWebGL(glR, fromR, toR, leftR, rightR)
+    .then(() => {
+        console.log("WebGL initialization successful.");
+    })
+    .catch((error) => {
+        console.error("Error during WebGL initialization:", error);
+    });
 });
