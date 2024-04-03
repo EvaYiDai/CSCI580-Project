@@ -246,15 +246,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    const fromL = [-0.3, 4, 15];
+    const fromL = [-0.2, 4, 15];
     const toL = [0, 0, 0];
-    const leftL = -0.7;
-    const rightL = 1.3;
+    const leftL = -1;
+    const rightL = 1;
 
-    const fromR = [0.3, 4, 15];
+    const fromR = [0.2, 4, 15];
     const toR = [0, 0, 0];
-    const leftR = -1.3;
-    const rightR = 0.7;
+    const leftR = -1;
+    const rightR = 1;
 
     initWebGL(gl, fromL, toL, leftL, rightL)
         .then(() => {
