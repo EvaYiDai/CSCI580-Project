@@ -67,9 +67,8 @@ function createShaderProgram(gl, vsSource, fsSource) {
 
 async function initWebGL(gl) {
     try {
-        const data = await loadData("data/teapotHW3.json");
+        const data = await loadData("data/teapotHW5.json");
         //data processing
-        let maxZ = -1;
         const vertex = [];
         for (let i = 0; i < data.data.length; ++i) {
             vertex.push(...data.data[i].v0.v);
@@ -78,12 +77,7 @@ async function initWebGL(gl) {
             vertex.push(...data.data[i].v1.n);
             vertex.push(...data.data[i].v2.v);
             vertex.push(...data.data[i].v2.n);
-            if (data.data[i].v0.v[2] > maxZ) maxZ = data.data[i].v0.v[2];
-            if (data.data[i].v1.v[2] > maxZ) maxZ = data.data[i].v1.v[2];
-            if (data.data[i].v2.v[2] > maxZ) maxZ = data.data[i].v2.v[2];
         }
-
-        for (let i = 2; i < vertex.length; i += 6) vertex[i] = vertex[i] / maxZ;
 
         const vertexShaderSource = await fetchShader(
             "shaders/vertexShader.glsl"
@@ -128,23 +122,27 @@ async function initWebGL(gl) {
              * Shader Attributes
              */
             // Example view and perspective matrices
-            const u = [1, 0, 0];
-            const v = [0, 1, 0];
-            const n = [0, 0, 1];
-            const r = [0, 0, 20];
+            const FROM = [3, 4, 12];
+            const TO = [0, 0, 0];
+
+            const n = normalize(
+                FROM.map((item, index) => item - TO[index])
+            );
+            let u = normalize(cross([0, 1, 0], n));
+            const v = cross(n, u);
+            const r = FROM;
             const viewMat = vM(u, v, n, r);
 
-            const near = 19;
-            const far = 21;
-            const left = -5;
-            const right = 5;
-            const bottom = -5;
-            const top = 5;
+            const near = 3;
+            const far = 20;
+            const left = -1;
+            const right = 1;
+            const bottom = -1;
+            const top = 1;
             const perspectiveMat = pM(near, far, left, right, bottom, top);
 
             const flatViewMat = flattenMatrix(transpose(viewMat));
             const flatPerspectiveMat = flattenMatrix(transpose(perspectiveMat));
-            console.log(flatPerspectiveMat);
 
             const viewMatrixLocation = gl.getUniformLocation(
                 shaderProgram,
