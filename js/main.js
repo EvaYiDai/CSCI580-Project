@@ -69,7 +69,6 @@ async function initWebGL(gl) {
     try {
         const data = await loadData("data/teapotHW5.json");
         //data processing
-        let maxZ = -1;
         const vertex = [];
         for (let i = 0; i < data.data.length; ++i) {
             vertex.push(...data.data[i].v0.v);
@@ -78,11 +77,7 @@ async function initWebGL(gl) {
             vertex.push(...data.data[i].v1.n);
             vertex.push(...data.data[i].v2.v);
             vertex.push(...data.data[i].v2.n);
-            if (data.data[i].v0.v[2] > maxZ) maxZ = data.data[i].v0.v[2];
-            if (data.data[i].v1.v[2] > maxZ) maxZ = data.data[i].v1.v[2];
-            if (data.data[i].v2.v[2] > maxZ) maxZ = data.data[i].v2.v[2];
         }
-        for (let i = 2; i < vertex.length; i += 6) vertex[i] = vertex[i] / maxZ;
 
         const vertexShaderSource = await fetchShader(
             "shaders/vertexShader.glsl"
