@@ -2,22 +2,22 @@
 precision mediump float;
 
 #define MATERIAL_COLOR vec3(.5, .5, .5)
-#define AMBIENT_COLOR vec3(1., 1., 0.)
-#define AMBIENT_INTENSITY .9
-#define LIGHT_COLOR vec3(.95, .65, .88)
-#define LIGHT_INTENSITY .9
-#define SHINE 10.
-#define Ka .2
-#define Kd .4
-#define Ks 1.
+#define AMBIENT_COLOR vec3(1., 1., 1.)
+#define AMBIENT_INTENSITY .2
+#define LIGHT_COLOR vec3(1., .5, 1.)
+#define LIGHT_INTENSITY .6
+#define SHINE 2.
+#define Ka .5
+#define Kd .75
+#define Ks .9
 
 in vec3 vNormal;
 in vec3 vPosition;
 out vec4 o;
 
 void main() {
-	vec3 L = normalize(vec3(1., 0., .3));
-	vec3 V = normalize(vPosition);
+	vec3 L = normalize(vec3(0.687118, 0.29119054, 0.66564024));
+	vec3 V = normalize(-vPosition);
 	vec3 H = normalize(L + V);
 	float NL = dot(vNormal, L);
 	float NH = dot(vNormal, H);

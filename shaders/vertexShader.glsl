@@ -8,6 +8,6 @@ out vec3 vNormal;
 out vec3 vPosition;
 void main() {
    gl_Position = perspectiveMatrix * viewMatrix * vec4(vertexPosition, 1.0);
-   vNormal = normalPosition;
-   vPosition = gl_Position.xyz;
+   vNormal = mat3(viewMatrix) * normalPosition;
+   vPosition = (viewMatrix * vec4(vertexPosition, 1.0)).xyz;
 }
