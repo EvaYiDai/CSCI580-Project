@@ -161,6 +161,49 @@ async function initWebGL(gl, from, to, left, right) {
                 false,
                 flatPerspectiveMat
             );
+            //Light/Material Uniforms
+            const shineLocation = gl.getUniformLocation(
+                shaderProgram,
+                "shine"
+            );
+            const KaLocation = gl.getUniformLocation(
+                shaderProgram,
+                "Ka"
+            );
+            const KdLocation = gl.getUniformLocation(
+                shaderProgram,
+                "Kd"
+            );
+            const KsLocation = gl.getUniformLocation(
+                shaderProgram,
+                "Ks"
+            );
+            if (shineLocation < 0)
+                console.log(
+                    "Failed to get uniform location for...shine"
+                );
+            if (KaLocation < 0)
+                console.log(
+                    "Failed to get uniform location for...Ka"
+                );
+            if (KdLocation < 0)
+                console.log(
+                    "Failed to get uniform location for...Kd"
+                );
+            if (KsLocation < 0)
+                console.log(
+                    "Failed to get uniform location for...Ks"
+                );
+            //get values from sliders
+            var shineVal = parseFloat(document.getElementById("shineSlider").value);
+            var KaVal = parseFloat(document.getElementById("KaSlider").value);
+            var KdVal = parseFloat(document.getElementById("KdSlider").value);
+            var KsVal = parseFloat(document.getElementById("KsSlider").value);
+            gl.uniform1f(shineLocation, shineVal);
+            gl.uniform1f(KaLocation, KaVal);
+            gl.uniform1f(KdLocation, KdVal);
+            gl.uniform1f(KsLocation, KsVal);
+
             const vI = gl.getAttribLocation(shaderProgram, "vertexPosition");
             const nI = gl.getAttribLocation(shaderProgram, "normalPosition");
             if (vI < 0)
@@ -278,3 +321,9 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error during WebGL initialization:", error);
         });
 });
+
+// Function to reload the page
+function reloadPage() {
+    window.location.reload();
+}
+document.getElementById("reloadButton").addEventListener("click", reloadPage);

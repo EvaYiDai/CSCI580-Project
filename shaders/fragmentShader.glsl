@@ -6,13 +6,16 @@ precision mediump float;
 #define AMBIENT_INTENSITY .2
 #define LIGHT_COLOR vec3(1., .5, 1.)
 #define LIGHT_INTENSITY .6
-#define SHINE 2.
-#define Ka .5
-#define Kd .75
-#define Ks .9
-
+// #define SHINE 2.
+// #define Ka .5
+// #define Kd .75
+// #define Ks .9
 in vec3 vNormal;
 in vec3 vPosition;
+uniform float shine;
+uniform float Ka;
+uniform float Kd;
+uniform float Ks;
 out vec4 o;
 
 void main() {
@@ -26,7 +29,7 @@ void main() {
 
 	vec3 A = AMBIENT_COLOR * AMBIENT_INTENSITY;
 	vec3 D = LIGHT_COLOR * LIGHT_INTENSITY * max(0., NL);
-	vec3 S = LIGHT_COLOR * LIGHT_INTENSITY * FACING * pow(max(0., NH), SHINE);
+	vec3 S = LIGHT_COLOR * LIGHT_INTENSITY * FACING * pow(max(0., NH), shine);
 
 	vec3 color = MATERIAL_COLOR * (Ka * A + Kd * D) + Ks * S;
 	o = vec4(color, 1.);
