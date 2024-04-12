@@ -10,6 +10,7 @@ import {
     mM,
     pM,
     vM,
+    calculateOffset,
 } from "./util.js";
 
 async function loadData(path) {
@@ -123,9 +124,7 @@ async function initWebGL(gl, from, to, left, right) {
              */
             // Example view and perspective matrices
 
-            const n = normalize(
-                from.map((item, index) => item - to[index])
-            );
+            const n = normalize(from.map((item, index) => item - to[index]));
             let u = normalize(cross([0, 1, 0], n));
             const v = cross(n, u);
             const r = from;
@@ -246,15 +245,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    const fromL = [-0.2, 4, 15];
-    const toL = [0, 0, 0];
-    const leftL = -1;
-    const rightL = 1;
+    const left = -1;
+    const right = 1;
 
-    const fromR = [0.2, 4, 15];
+    const fromL = [-1, 4, 15];
+    const toL = [0, 0, 0];
+
+    const fromR = [1, 4, 15];
     const toR = [0, 0, 0];
-    const leftR = -1;
-    const rightR = 1;
+
+    // I only used L to calculate the offset, and then apply it to all L and R.
+    // This is under the assumption that the two camera are symmetric to x = 0,
+    // and also left and right is also symmetric to 0.
+    const offset = calculateOffset(left, right, fromL, toL);
+    const leftL = left + offset;
+    const rightL = right + offset;
+    const leftR = left - offset;
+    const rightR = right - offset;
 
     initWebGL(gl, fromL, toL, leftL, rightL)
         .then(() => {
@@ -264,10 +271,10 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error during WebGL initialization:", error);
         });
     initWebGL(glR, fromR, toR, leftR, rightR)
-    .then(() => {
-        console.log("WebGL initialization successful.");
-    })
-    .catch((error) => {
-        console.error("Error during WebGL initialization:", error);
-    });
+        .then(() => {
+            console.log("WebGL initialization successful.");
+        })
+        .catch((error) => {
+            console.error("Error during WebGL initialization:", error);
+        });
 });
