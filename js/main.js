@@ -1,4 +1,7 @@
 import {
+    rotX,
+    rotY,
+    rotZ,
     transpose,
     cross,
     normalize,
@@ -122,7 +125,19 @@ async function initWebGL(gl, from, to, left, right) {
             /**
              * Shader Attributes
              */
-            // Example view and perspective matrices
+            var RxVal = parseFloat(document.getElementById("RxSlider").value);
+            var RxOutput = document.getElementById("RxValue");
+            RxOutput.innerHTML = RxVal;
+
+            var RyVal = parseFloat(document.getElementById("RySlider").value);
+            var RyOutput = document.getElementById("RyValue");
+            RyOutput.innerHTML = RyVal;
+
+            var RzVal = parseFloat(document.getElementById("RzSlider").value);
+            var RzOutput = document.getElementById("RzValue");
+            RzOutput.innerHTML = RzVal;
+
+            const modelMat = t4(t4(rotX(RxVal), rotY(RyVal)), rotZ(RzVal));
 
             const n = normalize(from.map((item, index) => item - to[index]));
             let u = normalize(cross([0, 1, 0], n));
@@ -136,9 +151,14 @@ async function initWebGL(gl, from, to, left, right) {
             const top = 1;
             const perspectiveMat = pM(near, far, left, right, bottom, top);
 
+            const flatModelMat = flattenMatrix(modelMat);
             const flatViewMat = flattenMatrix(transpose(viewMat));
             const flatPerspectiveMat = flattenMatrix(transpose(perspectiveMat));
 
+            const modelMatrixLocation = gl.getUniformLocation(
+                shaderProgram,
+                "modelMatrix"
+            );
             const viewMatrixLocation = gl.getUniformLocation(
                 shaderProgram,
                 "viewMatrix"
@@ -147,6 +167,10 @@ async function initWebGL(gl, from, to, left, right) {
                 shaderProgram,
                 "perspectiveMatrix"
             );
+            if (modelMatrixLocation < 0)
+                console.log(
+                    "Failed to get uniform location for...modelPosition"
+                );
             if (viewMatrixLocation < 0)
                 console.log(
                     "Failed to get uniform location for...vertexPosition"
@@ -155,6 +179,7 @@ async function initWebGL(gl, from, to, left, right) {
                 console.log(
                     "Failed to get uniform location for...normalPosition"
                 );
+            gl.uniformMatrix4fv(modelMatrixLocation, false, flatModelMat);
             gl.uniformMatrix4fv(viewMatrixLocation, false, flatViewMat);
             gl.uniformMatrix4fv(
                 perspectiveMatrixLocation,
@@ -270,6 +295,75 @@ async function initWebGL(gl, from, to, left, right) {
                     var KsVal = parseFloat(this.value);
                     gl.uniform1f(KsLocation, KsVal);
                     KsOutput.innerHTML = KsVal;
+                    gl.clearColor(0.5, 0.45, 0.4, 1.0);
+                    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                    gl.useProgram(shaderProgram);
+                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+                });
+
+            document
+                .getElementById("RxSlider")
+                .addEventListener("input", function () {
+                    var RxVal = parseFloat(this.value);
+                    RxOutput.innerHTML = RxVal;
+                    var RyVal = parseFloat(document.getElementById("RySlider").value);
+                    var RzVal = parseFloat(document.getElementById("RzSlider").value);
+                    const modelMat = t4(
+                        t4(rotX(RxVal), rotY(RyVal)),
+                        rotZ(RzVal)
+                    );
+                    const flatModelMat = flattenMatrix(modelMat);
+                    gl.uniformMatrix4fv(
+                        modelMatrixLocation,
+                        false,
+                        flatModelMat
+                    );
+                    gl.clearColor(0.5, 0.45, 0.4, 1.0);
+                    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                    gl.useProgram(shaderProgram);
+                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+                });
+
+            document
+                .getElementById("RySlider")
+                .addEventListener("input", function () {
+                    var RyVal = parseFloat(this.value);
+                    RyOutput.innerHTML = RyVal;
+                    var RxVal = parseFloat(document.getElementById("RxSlider").value);
+                    var RzVal = parseFloat(document.getElementById("RzSlider").value);
+                    const modelMat = t4(
+                        t4(rotX(RxVal), rotY(RyVal)),
+                        rotZ(RzVal)
+                    );
+                    const flatModelMat = flattenMatrix(modelMat);
+                    gl.uniformMatrix4fv(
+                        modelMatrixLocation,
+                        false,
+                        flatModelMat
+                    );
+                    gl.clearColor(0.5, 0.45, 0.4, 1.0);
+                    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                    gl.useProgram(shaderProgram);
+                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+                });
+
+            document
+                .getElementById("RzSlider")
+                .addEventListener("input", function () {
+                    var RzVal = parseFloat(this.value);
+                    RzOutput.innerHTML = RzVal;
+                    var RxVal = parseFloat(document.getElementById("RxSlider").value);
+                    var RyVal = parseFloat(document.getElementById("RySlider").value);
+                    const modelMat = t4(
+                        t4(rotX(RxVal), rotY(RyVal)),
+                        rotZ(RzVal)
+                    );
+                    const flatModelMat = flattenMatrix(modelMat);
+                    gl.uniformMatrix4fv(
+                        modelMatrixLocation,
+                        false,
+                        flatModelMat
+                    );
                     gl.clearColor(0.5, 0.45, 0.4, 1.0);
                     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                     gl.useProgram(shaderProgram);

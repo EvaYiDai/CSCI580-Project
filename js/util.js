@@ -1,25 +1,28 @@
 const rotX = (x) => {
+    const xRadians = (x * Math.PI) / 180;
     const xRot = [
         [1, 0, 0, 0],
-        [0, Math.cos(x), -Math.sin(x), 0],
-        [0, Math.sin(x), Math.cos(x), 0],
+        [0, Math.cos(xRadians), -Math.sin(xRadians), 0],
+        [0, Math.sin(xRadians), Math.cos(xRadians), 0],
         [0, 0, 0, 1],
     ];
     return xRot;
 };
 const rotY = (y) => {
+    const yRadians = (y * Math.PI) / 180;
     const yRot = [
-        [Math.cos(y), 0, Math.sin(y), 0],
+        [Math.cos(yRadians), 0, Math.sin(yRadians), 0],
         [0, 1, 0, 0],
-        [-Math.sin(y), 0, Math.cos(y), 0],
+        [-Math.sin(yRadians), 0, Math.cos(yRadians), 0],
         [0, 0, 0, 1],
     ];
     return yRot;
 };
 const rotZ = (z) => {
+    const zRadians = (z * Math.PI) / 180;
     const zRot = [
-        [Math.cos(z), -Math.sin(z), 0, 0],
-        [Math.sin(z), Math.cos(z), 0, 0],
+        [Math.cos(zRadians), -Math.sin(zRadians), 0, 0],
+        [Math.sin(zRadians), Math.cos(zRadians), 0, 0],
         [0, 0, 1, 0],
         [0, 0, 0, 1],
     ];
@@ -134,6 +137,9 @@ const calculateOffset = (L, R, from, to) => {
     return Math.abs(adjustedL - Math.abs(L));
 };
 export {
+    rotX,
+    rotY,
+    rotZ,
     transpose,
     cross,
     normalize,
