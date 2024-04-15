@@ -162,43 +162,37 @@ async function initWebGL(gl, from, to, left, right) {
                 flatPerspectiveMat
             );
             //Light/Material Uniforms
-            const shineLocation = gl.getUniformLocation(
-                shaderProgram,
-                "shine"
-            );
-            const KaLocation = gl.getUniformLocation(
-                shaderProgram,
-                "Ka"
-            );
-            const KdLocation = gl.getUniformLocation(
-                shaderProgram,
-                "Kd"
-            );
-            const KsLocation = gl.getUniformLocation(
-                shaderProgram,
-                "Ks"
-            );
+            const shineLocation = gl.getUniformLocation(shaderProgram, "shine");
+            const KaLocation = gl.getUniformLocation(shaderProgram, "Ka");
+            const KdLocation = gl.getUniformLocation(shaderProgram, "Kd");
+            const KsLocation = gl.getUniformLocation(shaderProgram, "Ks");
             if (shineLocation < 0)
-                console.log(
-                    "Failed to get uniform location for...shine"
-                );
+                console.log("Failed to get uniform location for...shine");
             if (KaLocation < 0)
-                console.log(
-                    "Failed to get uniform location for...Ka"
-                );
+                console.log("Failed to get uniform location for...Ka");
             if (KdLocation < 0)
-                console.log(
-                    "Failed to get uniform location for...Kd"
-                );
+                console.log("Failed to get uniform location for...Kd");
             if (KsLocation < 0)
-                console.log(
-                    "Failed to get uniform location for...Ks"
-                );
+                console.log("Failed to get uniform location for...Ks");
             //get values from sliders
-            var shineVal = parseFloat(document.getElementById("shineSlider").value);
+            var shineVal = parseFloat(
+                document.getElementById("shineSlider").value
+            );
+            var shineOutput = document.getElementById("shineValue");
+            shineOutput.innerHTML = shineVal;
+
             var KaVal = parseFloat(document.getElementById("KaSlider").value);
+            var KaOutput = document.getElementById("KaValue");
+            KaOutput.innerHTML = KaVal;
+
             var KdVal = parseFloat(document.getElementById("KdSlider").value);
+            var KdOutput = document.getElementById("KdValue");
+            KdOutput.innerHTML = KdVal;
+
             var KsVal = parseFloat(document.getElementById("KsSlider").value);
+            var KsOutput = document.getElementById("KsValue");
+            KsOutput.innerHTML = KsVal;
+
             gl.uniform1f(shineLocation, shineVal);
             gl.uniform1f(KaLocation, KaVal);
             gl.uniform1f(KdLocation, KdVal);
@@ -233,6 +227,54 @@ async function initWebGL(gl, from, to, left, right) {
              */
             gl.useProgram(shaderProgram);
             gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+
+            document
+                .getElementById("shineSlider")
+                .addEventListener("input", function () {
+                    var shineVal = parseFloat(this.value);
+                    gl.uniform1f(shineLocation, shineVal);
+                    shineOutput.innerHTML = shineVal;
+                    gl.clearColor(0.5, 0.45, 0.4, 1.0);
+                    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                    gl.useProgram(shaderProgram);
+                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+                });
+
+            document
+                .getElementById("KaSlider")
+                .addEventListener("input", function () {
+                    var KaVal = parseFloat(this.value);
+                    gl.uniform1f(KaLocation, KaVal);
+                    KaOutput.innerHTML = KaVal;
+                    gl.clearColor(0.5, 0.45, 0.4, 1.0);
+                    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                    gl.useProgram(shaderProgram);
+                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+                });
+
+            document
+                .getElementById("KdSlider")
+                .addEventListener("input", function () {
+                    var KdVal = parseFloat(this.value);
+                    gl.uniform1f(KdLocation, KdVal);
+                    KdOutput.innerHTML = KdVal;
+                    gl.clearColor(0.5, 0.45, 0.4, 1.0);
+                    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                    gl.useProgram(shaderProgram);
+                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+                });
+
+            document
+                .getElementById("KsSlider")
+                .addEventListener("input", function () {
+                    var KsVal = parseFloat(this.value);
+                    gl.uniform1f(KsLocation, KsVal);
+                    KsOutput.innerHTML = KsVal;
+                    gl.clearColor(0.5, 0.45, 0.4, 1.0);
+                    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                    gl.useProgram(shaderProgram);
+                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+                });
         }
     } catch (error) {
         console.error("Error initializing WebGL:", error);
