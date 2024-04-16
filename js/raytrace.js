@@ -176,15 +176,13 @@ function ray_trace(vM,vertex,canvas,u,v,r) {
     const image = [];
     
     const eye = [3,4,10];
-   
-    for (let i = 0; i < 512; i++) {
-        for (let j = 0; j < 512; j++) {
-           const ray = getRay(i, j,eye, 512, 512);
+    for (let i = 0; i < 256; i++) {
+        for (let j = 0; j < 256; j++) {
+           const ray = getRay(i, j,eye, 256, 256);
             const col =ray_color(ray, vertex);
-            
                 canvas.fillStyle = `rgb(${255*col[0]},${
                     255*col[1]}, ${255*col[2]})`;    
-            canvas.fillRect(i, j, 512, 512);
+            canvas.fillRect(i, j, 256, 256);
         }
     }
     return image;
