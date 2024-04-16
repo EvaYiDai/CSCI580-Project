@@ -10,7 +10,11 @@ import {
     mM,
     pM,
     vM,
+    calculateOffset,
 } from "./util.js";
+import {
+    ray_trace,
+} from "./raytrace.js";
 
 async function loadData(path) {
     const response = await fetch(path);
@@ -20,52 +24,8 @@ async function loadData(path) {
     return await response.json();
 }
 
-async function fetchShader(url) {
-    const response = await fetch(url);
-    if (!response.ok) {
-        throw new Error(`Failed to load shader: ${url}`);
-    }
-    const shaderSource = await response.text();
-    return shaderSource;
-}
 
-function compileShader(gl, sourceCode, type) {
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, sourceCode);
-    gl.compileShader(shader);
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        const errorMessage = gl.getShaderInfoLog(shader);
-        console.error(
-            `Failed to compile ${
-                type === gl.VERTEX_SHADER ? "vertex" : "fragment"
-            } shader: ${errorMessage}`
-        );
-        gl.deleteShader(shader);
-        return null;
-    }
-    return shader;
-}
-
-function createShaderProgram(gl, vsSource, fsSource) {
-    const vertexShader = compileShader(gl, vsSource, gl.VERTEX_SHADER);
-    const fragmentShader = compileShader(gl, fsSource, gl.FRAGMENT_SHADER);
-
-    const program = gl.createProgram();
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragmentShader);
-    gl.linkProgram(program);
-
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        console.error(
-            `Failed to link program: ${gl.getProgramInfoLog(program)}`
-        );
-        return null;
-    }
-
-    return program;
-}
-
-async function initWebGL(gl) {
+async function initWebGL(gl, from, to, left, right,canvas) {
     try {
         const data = await loadData("data/teapotHW5.json");
         //data processing
@@ -79,123 +39,20 @@ async function initWebGL(gl) {
             vertex.push(...data.data[i].v2.n);
         }
 
-        const vertexShaderSource = await fetchShader(
-            "shaders/vertexShader.glsl"
-        );
-        const fragmentShaderSource = await fetchShader(
-            "shaders/fragmentShader.glsl"
-        );
-
-        const shaderProgram = createShaderProgram(
-            gl,
-            vertexShaderSource,
-            fragmentShaderSource
-        );
-
-        if (shaderProgram) {
-            gl.useProgram(shaderProgram);
-            gl.clearColor(0.5, 0.45, 0.4, 1.0);
-            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-            gl.viewport(0, 0, 256, 256);
-            gl.enable(gl.DEPTH_TEST);
-
-            /**
-             * Buffers
-             */
-            const preBuffer = new Float32Array(vertex);
-            const vertexBuffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, preBuffer, gl.STATIC_DRAW);
-            gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-
-            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-            // Check if the framebuffer is complete
-            if (
-                gl.checkFramebufferStatus(gl.FRAMEBUFFER) !==
-                gl.FRAMEBUFFER_COMPLETE
-            ) {
-                console.log("Framebuffer is not complete");
-            }
-            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-            /**
-             * Shader Attributes
-             */
-            // Example view and perspective matrices
-            const FROM = [3, 4, 12];
-            const TO = [0, 0, 0];
-
-            const n = normalize(
-                FROM.map((item, index) => item - TO[index])
-            );
+            const n = normalize(from.map((item, index) => item - to[index]));
             let u = normalize(cross([0, 1, 0], n));
             const v = cross(n, u);
-            const r = FROM;
+            const r = from;
             const viewMat = vM(u, v, n, r);
-
+            
             const near = 3;
             const far = 20;
-            const left = -1;
-            const right = 1;
             const bottom = -1;
             const top = 1;
             const perspectiveMat = pM(near, far, left, right, bottom, top);
-
-            const flatViewMat = flattenMatrix(transpose(viewMat));
-            const flatPerspectiveMat = flattenMatrix(transpose(perspectiveMat));
-
-            const viewMatrixLocation = gl.getUniformLocation(
-                shaderProgram,
-                "viewMatrix"
-            );
-            const perspectiveMatrixLocation = gl.getUniformLocation(
-                shaderProgram,
-                "perspectiveMatrix"
-            );
-            if (viewMatrixLocation < 0)
-                console.log(
-                    "Failed to get uniform location for...vertexPosition"
-                );
-            if (perspectiveMatrixLocation < 0)
-                console.log(
-                    "Failed to get uniform location for...normalPosition"
-                );
-            gl.uniformMatrix4fv(viewMatrixLocation, false, flatViewMat);
-            gl.uniformMatrix4fv(
-                perspectiveMatrixLocation,
-                false,
-                flatPerspectiveMat
-            );
-            const vI = gl.getAttribLocation(shaderProgram, "vertexPosition");
-            const nI = gl.getAttribLocation(shaderProgram, "normalPosition");
-            if (vI < 0)
-                console.log(
-                    "Failed to get attribute location for...vertexPosition"
-                );
-            if (nI < 0)
-                console.log(
-                    "Failed to get attribute location for...normalPosition"
-                );
-
-            const stride = 6 * Float32Array.BYTES_PER_ELEMENT;
-            gl.enableVertexAttribArray(vI);
-            gl.vertexAttribPointer(vI, 3, gl.FLOAT, false, stride, 0);
-            gl.enableVertexAttribArray(nI);
-            gl.vertexAttribPointer(
-                nI,
-                3,
-                gl.FLOAT,
-                false,
-                stride,
-                3 * Float32Array.BYTES_PER_ELEMENT
-            );
-
-            /**
-             * Draw
-             */
-            gl.useProgram(shaderProgram);
-            gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
-        }
+           
+            const image = ray_trace(viewMat,vertex, canvas);         
+        
     } catch (error) {
         console.error("Error initializing WebGL:", error);
     }
@@ -206,14 +63,21 @@ document.addEventListener("DOMContentLoaded", () => {
      * Canvas
      */
     //get canvas reference
-    const canvas = document.getElementById("glcanvas");
+    const canvas = document.getElementById("glcanvas_l");
+    const canvasR = document.getElementById("glcanvas_r");
     if (!canvas) {
         console.log(
             "Could not find HTML canvas element - check for typos, or loading JavaScript file too early"
         );
     }
+    if (!canvasR) {
+        console.log(
+            "Could not find HTML canvas element - check for typos, or loading JavaScript file too early"
+        );
+    }
     //get webGL2 reference
-    const gl = canvas.getContext("webgl2");
+    const gl = canvas.getContext("2d");
+    const glR = canvasR.getContext("2d");
     if (!gl) {
         const isWebGl1Supported = !!document
             .createElement("canvas")
@@ -228,8 +92,48 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         }
     }
+    if (!glR) {
+        const isWebGl1Supported = !!document
+            .createElement("canvas")
+            .getContext("webgl");
+        if (isWebGl1Supported) {
+            console.log(
+                "WebGL 1 is supported, but not v2 - try using a different device or browser"
+            );
+        } else {
+            console.log(
+                "WebGL is not supported on this device - try using a different device or browser"
+            );
+        }
+    }
 
-    initWebGL(gl)
+    const left = -1;
+    const right = 1;
+
+    const fromL = [-1, 4, 15];
+    const toL = [0, 0, 0];
+
+    const fromR = [1, 4, 15];
+    const toR = [0, 0, 0];
+
+    // I only used L to calculate the offset, and then apply it to all L and R.
+    // This is under the assumption that the two camera are symmetric to x = 0,
+    // and also left and right is also symmetric to 0.
+    const offset = calculateOffset(left, right, fromL, toL);
+    const leftL = left + offset;
+    const rightL = right + offset;
+    const leftR = left - offset;
+    const rightR = right - offset;
+
+    initWebGL(gl, fromL, toL, leftL, rightL,gl)
+        .then(() => {
+            console.log("WebGL initialization successful.");
+    
+        })
+        .catch((error) => {
+            console.error("Error during WebGL initialization:", error);
+        });
+    initWebGL(glR, fromR, toR, leftR, rightR,glR)
         .then(() => {
             console.log("WebGL initialization successful.");
         })
@@ -237,3 +141,9 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error during WebGL initialization:", error);
         });
 });
+
+// Function to reload the page
+function reloadPage() {
+    window.location.reload();
+}
+document.getElementById("reloadButton").addEventListener("click", reloadPage);
