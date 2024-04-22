@@ -1,4 +1,4 @@
-function ray_color(ray, vertex) {
+function ray_color(ray, vertex,shineOutput,KaVal,KdVal,KsVal) {
     let I = {
         flag: false,
         t: Number.MAX_VALUE,
@@ -20,7 +20,7 @@ function ray_color(ray, vertex) {
     {
         
         const normal = barycentricCoordinates(vertex,I,count);
-        const col = phong_shading(I.p,[1,0.5,1],ray.orig,count,normal)
+        const col = phong_shading(I.p,[1,0.5,1],ray.orig,count,normal,shineOutput,KaVal,KdVal,KsVal)
         return col
     }
     return [0.2,0.2,0.2];
@@ -149,27 +149,9 @@ function cross(a, b) {
     ];
 }
 
-function phong_shading(point,light,origin,c,N){
+function phong_shading(point,light,origin,c,N,shineOutput,KaVal,KdVal,KsVal){
     
             
-            //get values from sliders
-            var shineVal = parseFloat(
-                document.getElementById("shineSlider").value
-            );
-            var shineOutput = document.getElementById("shineValue");
-            shineOutput.innerHTML = shineVal;
-
-            var KaVal = parseFloat(document.getElementById("KaSlider").value);
-            var KaOutput = document.getElementById("KaValue");
-            KaOutput.innerHTML = KaVal;
-
-            var KdVal = parseFloat(document.getElementById("KdSlider").value);
-            var KdOutput = document.getElementById("KdValue");
-            KdOutput.innerHTML = KdVal;
-
-            var KsVal = parseFloat(document.getElementById("KsSlider").value);
-            var KsOutput = document.getElementById("KsValue");
-            KsOutput.innerHTML = KsVal;
 
     const L = Normalize(Subtract(light, point));
    
@@ -177,7 +159,7 @@ function phong_shading(point,light,origin,c,N){
     let ka = KaVal;
     let kd=KdVal;
     let ks=KsVal;
-    let n =shineVal;
+    let n =shineOutput;
     const d = Math.min(Math.max(dot(N, L), 0), 1);
     const R = Normalize(Subtract(ScalarMultiply(N, 2 * dot(N, L)), L));
     const H = Normalize(Add(L,E));
@@ -190,41 +172,16 @@ function phong_shading(point,light,origin,c,N){
 
     const col =Add(A,Add(D,S));
     return col;
-    document
-                .getElementById("KaSlider")
-                .addEventListener("input", function () {
-                    var KaVal = parseFloat(this.value);
-                    KaOutput.innerHTML = KaVal;
-                    const L = Normalize(Subtract(light, point));
-   
-                    const E = Subtract(origin,point);
-                    let ka = KaVal;
-                    let kd=KdVal;
-                    let ks=KsVal;
-                    let n =shineVal;
-                    const d = Math.min(Math.max(dot(N, L), 0), 1);
-                    const R = Normalize(Subtract(ScalarMultiply(N, 2 * dot(N, L)), L));
-                    const H = Normalize(Add(L,E));
-                    const s = Math.min(Math.max(Math.pow(dot(N,H), n), 0), 1);
-                    const la =[0.2,0.2,0.2];
-                    const le =[0.6,0.3,0.6];
-                    const A = ScalarMultiply(la,ka);
-                    const D = ScalarMultiply(le,d*kd);
-                    const S = ScalarMultiply(le,s*ks);
-                
-                    const col =Add(A,Add(D,S));
-                    return col;
-                });
 }
 
-function ray_trace(vertex,canvas) {
+function ray_trace(vertex,canvas,shineOutput,KaVal,KdVal,KsVal) {
     const image = [];
     
     const eye = [0.04,0.25,2.5];
     for (let i = 0; i < 256; i++) {
         for (let j = 0; j < 256; j++) {
            const ray = getRay(i, j,eye, 256, 256);
-            const col =ray_color(ray, vertex);
+            const col =ray_color(ray, vertex,shineOutput,KaVal,KdVal,KsVal);
             
                 canvas.fillStyle = `rgb(${255*col[0]},${
                     255*col[1]}, ${255*col[2]})`;    
