@@ -136,6 +136,10 @@ async function initWebGL(gl, from, to, left, right,canvas) {
                     RxOutput.innerHTML = RxVal;
                     var RyVal = parseFloat(document.getElementById("RySlider").value);
                     var RzVal = parseFloat(document.getElementById("RzSlider").value);
+                    var shineOutput = parseFloat(document.getElementById("shineValue").value);
+                    var KaVal = parseFloat(document.getElementById("kaSlider").value);
+                    var KdVal = parseFloat(document.getElementById("kdSlider").value);
+                    var KsVal = parseFloat(document.getElementById("ksSlider").value);
                     const modelMat = mM(RxVal,RyVal,RzVal,1,1,1,0,0,0);
                     const n = normalize(from.map((item, index) => item - to[index]));
             let u = normalize(cross([0, 1, 0], n));
@@ -210,6 +214,10 @@ async function initWebGL(gl, from, to, left, right,canvas) {
                     RyOutput.innerHTML = RyVal;
                     var RxVal = parseFloat(document.getElementById("RxSlider").value);
                     var RzVal = parseFloat(document.getElementById("RzSlider").value);
+                    var shineOutput = parseFloat(document.getElementById("shineValue").value);
+                    var KaVal = parseFloat(document.getElementById("kaSlider").value);
+                    var KdVal = parseFloat(document.getElementById("kdSlider").value);
+                    var KsVal = parseFloat(document.getElementById("ksSlider").value);
                     const modelMat = mM(RxVal,RyVal,RzVal,1,1,1,0,0,0);
                     const n = normalize(from.map((item, index) => item - to[index]));
             let u = normalize(cross([0, 1, 0], n));
@@ -285,6 +293,10 @@ async function initWebGL(gl, from, to, left, right,canvas) {
                     RzOutput.innerHTML = RzVal;
                     var RxVal = parseFloat(document.getElementById("RxSlider").value);
                     var RyVal = parseFloat(document.getElementById("RySlider").value);
+                    var shineOutput = parseFloat(document.getElementById("shineValue").value);
+                    var KaVal = parseFloat(document.getElementById("kaSlider").value);
+                    var KdVal = parseFloat(document.getElementById("kdSlider").value);
+                    var KsVal = parseFloat(document.getElementById("ksSlider").value);
                     const modelMat = mM(RxVal,RyVal,RzVal,1,1,1,0,0,0);
                     const n = normalize(from.map((item, index) => item - to[index]));
             let u = normalize(cross([0, 1, 0], n));
