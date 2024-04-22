@@ -108,7 +108,80 @@ async function initWebGL(gl, from, to, left, right,canvas) {
             }
             
             const image = ray_trace(vertex, canvas); 
-               
+            document
+                .getElementById("RxSlider")
+                .addEventListener("input", function () {
+                    var RxVal = parseFloat(this.value);
+                    RxOutput.innerHTML = RxVal;
+                    var RyVal = parseFloat(document.getElementById("RySlider").value);
+                    var RzVal = parseFloat(document.getElementById("RzSlider").value);
+                    const modelMat = mM(RxVal,RyVal,RzVal,1,1,1,0,0,0);
+                    const n = normalize(from.map((item, index) => item - to[index]));
+            let u = normalize(cross([0, 1, 0], n));
+            const v = cross(n, u);
+            const r = from;
+            const viewMat = vM(u, v, n, r);
+            
+            const near = 3;
+            const far = 20;
+            const bottom = -1;
+            const top = 1;
+            const perspectiveMat = pM(near, far, left, right, bottom, top);
+
+            const vertex = [];
+            
+            for (let i = 0; i < data.data.length; ++i) {
+                
+                // Transform vertex 0
+            let v0 = [data.data[i].v0.v[0],data.data[i].v0.v[1],data.data[i].v0.v[2],1];
+            let n0 = [data.data[i].v0.n[0],data.data[i].v0.n[1],data.data[i].v0.n[2],0];
+            
+            let transformedV0 = multiplyMatrixVector(modelMat,v0);
+            let transformedN0 = multiplyMatrixVector(modelMat,n0);
+           
+            transformedV0 = multiplyMatrixVector(viewMat,transformedV0);
+            transformedN0 = multiplyMatrixVector(viewMat,transformedN0);
+
+            transformedV0 = multiplyMatrixVector(perspectiveMat,transformedV0);
+           
+           
+
+            // Transform vertex 1
+            let v1 = [data.data[i].v1.v[0],data.data[i].v1.v[1],data.data[i].v1.v[2],1];
+            let n1 = [data.data[i].v1.n[0],data.data[i].v1.n[1],data.data[i].v1.n[2],0];
+            let transformedV1 = multiplyMatrixVector(modelMat,v1);
+            let transformedN1 = multiplyMatrixVector(modelMat,n1);
+
+            transformedV1 = multiplyMatrixVector(viewMat,transformedV1);
+            transformedN1 = multiplyMatrixVector(viewMat,transformedN1);
+
+            transformedV1 = multiplyMatrixVector(perspectiveMat,transformedV1);
+            
+            
+            // Transform vertex 2
+            let v2 = [data.data[i].v2.v[0],data.data[i].v2.v[1],data.data[i].v2.v[2],1];
+            let n2 = [data.data[i].v2.n[0],data.data[i].v2.n[1],data.data[i].v2.n[2],0];
+            let transformedV2 = multiplyMatrixVector(modelMat,v2);
+            let transformedN2 = multiplyMatrixVector(modelMat,n2);
+
+            transformedV2 = multiplyMatrixVector(viewMat,transformedV2);
+            transformedN2 = multiplyMatrixVector(viewMat,transformedN2);
+
+            transformedV2 = multiplyMatrixVector(perspectiveMat,transformedV2);
+           
+           
+            vertex.push(transformedV0[0]/transformedV0[3],transformedV0[1]/transformedV0[3],transformedV0[2]/transformedV0[3]);
+            vertex.push(transformedN0[0],transformedN0[1],transformedN0[2]);
+            vertex.push(transformedV1[0]/transformedV1[3],transformedV1[1]/transformedV1[3],transformedV1[2]/transformedV1[3]);
+            vertex.push(transformedN1[0],transformedN1[1],transformedN1[2]);
+            vertex.push(transformedV2[0]/transformedV2[3],transformedV2[1]/transformedV2[3],transformedV2[2]/transformedV2[3]);
+            vertex.push(transformedN2[0],transformedN2[1],transformedN2[2]);
+            
+            }
+            
+            const image = ray_trace(vertex, canvas);
+                    
+                });   
         
     } catch (error) {
         console.error("Error initializing WebGL:", error);
