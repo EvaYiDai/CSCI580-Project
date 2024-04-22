@@ -86,7 +86,7 @@ const flattenMatrix = (matrix) => {
     return new Float32Array(matrix.reduce((acc, val) => acc.concat(val), []));
 };
 const mM = (rX, rY, rZ, sX, sY, sZ, tX, tY, tZ) => {
-    let result = [
+    let mM = [
         [1, 0, 0, 0],
         [0, 1, 0, 0],
         [0, 0, 1, 0],
@@ -99,6 +99,7 @@ const mM = (rX, rY, rZ, sX, sY, sZ, tX, tY, tZ) => {
     mM = t4(mM, tra(tX, tY, tZ));
     return mM;
 };
+
 const pM = (near, far, left, right, bottom, top) => {
     return [
         [(2 * near) / (right - left), 0, (right + left) / (right - left), 0],
@@ -134,6 +135,18 @@ const calculateOffset = (L, R, from, to) => {
     const adjustedL = Math.cos(Math.asin(LRdist / cameraDist));
     return Math.abs(adjustedL - Math.abs(L));
 };
+const multiplyMatrixVector=(matrix, vector)=> {
+    let result = [];
+    
+    for (let i = 0; i < 4; i++) {
+        result.push(0);
+        for (let j = 0; j < 4; j++) {
+            result[i] += matrix[i][j] * vector[j];
+           
+        }
+    }
+    return result;
+}
 export {
     transpose,
     cross,
@@ -147,4 +160,5 @@ export {
     pM,
     vM,
     calculateOffset,
+    multiplyMatrixVector,
 };
