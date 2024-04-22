@@ -179,7 +179,7 @@ function phong_shading(point,light,origin,c,N){
     let ks=KsVal;
     let n =shineVal;
     const d = Math.min(Math.max(dot(N, L), 0), 1);
-    //const R = Normalize(Subtract(ScalarMultiply(N, 2 * dot(N, L)), L));
+    const R = Normalize(Subtract(ScalarMultiply(N, 2 * dot(N, L)), L));
     const H = Normalize(Add(L,E));
     const s = Math.min(Math.max(Math.pow(dot(N,H), n), 0), 1);
     const la =[0.2,0.2,0.2];
@@ -189,14 +189,38 @@ function phong_shading(point,light,origin,c,N){
     const S = ScalarMultiply(le,s*ks);
 
     const col =Add(A,Add(D,S));
-    
     return col;
+    document
+                .getElementById("KaSlider")
+                .addEventListener("input", function () {
+                    var KaVal = parseFloat(this.value);
+                    KaOutput.innerHTML = KaVal;
+                    const L = Normalize(Subtract(light, point));
+   
+                    const E = Subtract(origin,point);
+                    let ka = KaVal;
+                    let kd=KdVal;
+                    let ks=KsVal;
+                    let n =shineVal;
+                    const d = Math.min(Math.max(dot(N, L), 0), 1);
+                    const R = Normalize(Subtract(ScalarMultiply(N, 2 * dot(N, L)), L));
+                    const H = Normalize(Add(L,E));
+                    const s = Math.min(Math.max(Math.pow(dot(N,H), n), 0), 1);
+                    const la =[0.2,0.2,0.2];
+                    const le =[0.6,0.3,0.6];
+                    const A = ScalarMultiply(la,ka);
+                    const D = ScalarMultiply(le,d*kd);
+                    const S = ScalarMultiply(le,s*ks);
+                
+                    const col =Add(A,Add(D,S));
+                    return col;
+                });
 }
 
 function ray_trace(vertex,canvas) {
     const image = [];
     
-    const eye = [0,0.25,2];
+    const eye = [0.04,0.25,2.5];
     for (let i = 0; i < 256; i++) {
         for (let j = 0; j < 256; j++) {
            const ray = getRay(i, j,eye, 256, 256);
