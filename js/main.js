@@ -42,6 +42,26 @@ async function initWebGL(gl, from, to, left, right,canvas) {
         var RzOutput = document.getElementById("RzValue");
         RzOutput.innerHTML = RzVal;
 
+        
+            //get values from sliders
+            var shineVal = parseFloat(
+                document.getElementById("shineSlider").value
+            );
+            var shineOutput = document.getElementById("shineValue");
+            shineOutput.innerHTML = shineVal;
+
+            var KaVal = parseFloat(document.getElementById("KaSlider").value);
+            var KaOutput = document.getElementById("KaValue");
+            KaOutput.innerHTML = KaVal;
+
+            var KdVal = parseFloat(document.getElementById("KdSlider").value);
+            var KdOutput = document.getElementById("KdValue");
+            KdOutput.innerHTML = KdVal;
+
+            var KsVal = parseFloat(document.getElementById("KsSlider").value);
+            var KsOutput = document.getElementById("KsValue");
+            KsOutput.innerHTML = KsVal;
+
             const modelMat = mM(RxVal,RyVal,RzVal,1,1,1,0,0,0);
 
             const n = normalize(from.map((item, index) => item - to[index]));
@@ -107,7 +127,8 @@ async function initWebGL(gl, from, to, left, right,canvas) {
             
             }
             
-            const image = ray_trace(vertex, canvas); 
+            const image = ray_trace(vertex, canvas,shineVal,KaVal,KdVal,KsVal); 
+            
             document
                 .getElementById("RxSlider")
                 .addEventListener("input", function () {
@@ -179,7 +200,7 @@ async function initWebGL(gl, from, to, left, right,canvas) {
             
             }
             
-            const image = ray_trace(vertex, canvas);
+            const image = ray_trace(vertex, canvas,shineOutput,KaVal,KdVal,KsVal);
                     
                 });  
                 document
@@ -253,7 +274,7 @@ async function initWebGL(gl, from, to, left, right,canvas) {
             
             }
             
-            const image = ray_trace(vertex, canvas);
+            const image = ray_trace(vertex, canvas,shineOutput,KaVal,KdVal,KsVal);
                     
                 });
 
@@ -328,7 +349,7 @@ async function initWebGL(gl, from, to, left, right,canvas) {
             
             }
             
-            const image = ray_trace(vertex, canvas);
+            const image = ray_trace(vertex, canvas,shineOutput,KaVal,KdVal,KsVal);
                     
                 }); 
         
