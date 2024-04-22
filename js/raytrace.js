@@ -49,6 +49,7 @@ function barycentricCoordinates(vertex, I,c)
         (t.n0[2]*I.ABG[0]+t.n1[2]*I.ABG[1]+t.n2[2]*I.ABG[2])]);
 }
 function hitTriangle(v0, v1, v2, n0, n1, n2, r) {
+    
     const e1 = Subtract(v1, v0);
     const e2 = Subtract(v2, v0);
     const pvec = cross(r.dir, e2);
@@ -105,7 +106,7 @@ function triPoint(v0, v1, v2, p) {
 }
 function getRay(i, j,eye, width, height) {
     const rad = (60.0 * Math.PI)/180;
-    const y = (2*((j+ 0.5) / height))-1;
+    const y = 1-(2*((j+ 0.5) / height));
     const x = (2*((i+ 0.5) / width))-1;
     const dir = Normalize([
         x * (width / height) * Math.tan(rad / 2),
@@ -150,13 +151,33 @@ function cross(a, b) {
 
 function phong_shading(point,light,origin,c,N){
     
+            
+            //get values from sliders
+            var shineVal = parseFloat(
+                document.getElementById("shineSlider").value
+            );
+            var shineOutput = document.getElementById("shineValue");
+            shineOutput.innerHTML = shineVal;
+
+            var KaVal = parseFloat(document.getElementById("KaSlider").value);
+            var KaOutput = document.getElementById("KaValue");
+            KaOutput.innerHTML = KaVal;
+
+            var KdVal = parseFloat(document.getElementById("KdSlider").value);
+            var KdOutput = document.getElementById("KdValue");
+            KdOutput.innerHTML = KdVal;
+
+            var KsVal = parseFloat(document.getElementById("KsSlider").value);
+            var KsOutput = document.getElementById("KsValue");
+            KsOutput.innerHTML = KsVal;
+
     const L = Normalize(Subtract(light, point));
    
     const E = Subtract(origin,point);
-    let ka = 0.5;
-    let kd=0.75;
-    let ks=0.9;
-    let n =2;
+    let ka = KaVal;
+    let kd=KdVal;
+    let ks=KsVal;
+    let n =shineVal;
     const d = Math.min(Math.max(dot(N, L), 0), 1);
     //const R = Normalize(Subtract(ScalarMultiply(N, 2 * dot(N, L)), L));
     const H = Normalize(Add(L,E));
@@ -172,14 +193,15 @@ function phong_shading(point,light,origin,c,N){
     return col;
 }
 
-function ray_trace(vM,vertex,canvas,u,v,r) {
+function ray_trace(vertex,canvas) {
     const image = [];
     
-    const eye = [3,4,10];
+    const eye = [0,0.25,2];
     for (let i = 0; i < 256; i++) {
         for (let j = 0; j < 256; j++) {
            const ray = getRay(i, j,eye, 256, 256);
             const col =ray_color(ray, vertex);
+            
                 canvas.fillStyle = `rgb(${255*col[0]},${
                     255*col[1]}, ${255*col[2]})`;    
             canvas.fillRect(i, j, 256, 256);
