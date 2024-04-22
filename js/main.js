@@ -57,6 +57,7 @@ async function initWebGL(gl, from, to, left, right,canvas) {
             const perspectiveMat = pM(near, far, left, right, bottom, top);
 
             const vertex = [];
+            
             for (let i = 0; i < data.data.length; ++i) {
                 
                 // Transform vertex 0
@@ -70,7 +71,7 @@ async function initWebGL(gl, from, to, left, right,canvas) {
             transformedN0 = multiplyMatrixVector(viewMat,transformedN0);
 
             transformedV0 = multiplyMatrixVector(perspectiveMat,transformedV0);
-            transformedN0 = multiplyMatrixVector(perspectiveMat,transformedN0);
+           
            
 
             // Transform vertex 1
@@ -83,7 +84,7 @@ async function initWebGL(gl, from, to, left, right,canvas) {
             transformedN1 = multiplyMatrixVector(viewMat,transformedN1);
 
             transformedV1 = multiplyMatrixVector(perspectiveMat,transformedV1);
-            transformedN1 = multiplyMatrixVector(perspectiveMat,transformedN1);
+            
             
             // Transform vertex 2
             let v2 = [data.data[i].v2.v[0],data.data[i].v2.v[1],data.data[i].v2.v[2],1];
@@ -95,18 +96,19 @@ async function initWebGL(gl, from, to, left, right,canvas) {
             transformedN2 = multiplyMatrixVector(viewMat,transformedN2);
 
             transformedV2 = multiplyMatrixVector(perspectiveMat,transformedV2);
-            transformedN2 = multiplyMatrixVector(perspectiveMat,transformedN2);
+           
            
             vertex.push(transformedV0[0]/transformedV0[3],transformedV0[1]/transformedV0[3],transformedV0[2]/transformedV0[3]);
-            vertex.push(transformedN0[0]/transformedV0[3],transformedV0[1]/transformedN0[3],transformedN0[2]/transformedN0[3]);
+            vertex.push(transformedN0[0],transformedN0[1],transformedN0[2]);
             vertex.push(transformedV1[0]/transformedV1[3],transformedV1[1]/transformedV1[3],transformedV1[2]/transformedV1[3]);
-            vertex.push(transformedN1[0]/transformedN1[3],transformedN1[1]/transformedN1[3],transformedN1[2]/transformedN1[3]);
+            vertex.push(transformedN1[0],transformedN1[1],transformedN1[2]);
             vertex.push(transformedV2[0]/transformedV2[3],transformedV2[1]/transformedV2[3],transformedV2[2]/transformedV2[3]);
-            vertex.push(transformedN2[0]/transformedN2[3],transformedN2[1]/transformedN2[3],transformedN2[2]/transformedN2[3]);
+            vertex.push(transformedN2[0],transformedN2[1],transformedN2[2]);
             
             }
             
-            const image = ray_trace(vertex, canvas);         
+            const image = ray_trace(vertex, canvas); 
+               
         
     } catch (error) {
         console.error("Error initializing WebGL:", error);
