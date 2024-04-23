@@ -1,4 +1,4 @@
-function ray_color(ray, vertex,shineOutput,KaVal,KdVal,KsVal) {
+function ray_color(ray, vertex) {
     let I = {
         flag: false,
         t: Number.MAX_VALUE,
@@ -20,7 +20,7 @@ function ray_color(ray, vertex,shineOutput,KaVal,KdVal,KsVal) {
     {
         
         const normal = barycentricCoordinates(vertex,I,count);
-        const col = phong_shading(I.p,[1,0.5,1],ray.orig,count,normal,shineOutput,KaVal,KdVal,KsVal)
+        const col = phong_shading(I.p,[1,0.5,1],ray.orig,count,normal)
         return col
     }
     return [0.2,0.2,0.2];
@@ -149,9 +149,12 @@ function cross(a, b) {
     ];
 }
 
-function phong_shading(point,light,origin,c,N,shineOutput,KaVal,KdVal,KsVal){
-    
-            
+function phong_shading(point,light,origin,c,N){
+
+            var shineVal = parseFloat(document.getElementById("shineSlider").value);
+            var KaVal = parseFloat(document.getElementById("KaSlider").value);
+            var KdVal = parseFloat(document.getElementById("KdSlider").value);
+            var KsVal = parseFloat(document.getElementById("KsSlider").value);
 
     const L = Normalize(Subtract(light, point));
    
@@ -159,7 +162,7 @@ function phong_shading(point,light,origin,c,N,shineOutput,KaVal,KdVal,KsVal){
     let ka = KaVal;
     let kd=KdVal;
     let ks=KsVal;
-    let n =shineOutput;
+    let n =shineVal;
     const d = Math.min(Math.max(dot(N, L), 0), 1);
     const R = Normalize(Subtract(ScalarMultiply(N, 2 * dot(N, L)), L));
     const H = Normalize(Add(L,E));
@@ -172,22 +175,24 @@ function phong_shading(point,light,origin,c,N,shineOutput,KaVal,KdVal,KsVal){
 
     const col =Add(A,Add(D,S));
     return col;
+
 }
 
-function ray_trace(vertex,canvas,shineOutput,KaVal,KdVal,KsVal) {
+function ray_trace(vertex,canvas) {
     const image = [];
     
     const eye = [0.04,0.25,2.5];
     for (let i = 0; i < 256; i++) {
         for (let j = 0; j < 256; j++) {
            const ray = getRay(i, j,eye, 256, 256);
-            const col =ray_color(ray, vertex,shineOutput,KaVal,KdVal,KsVal);
+            const col =ray_color(ray, vertex);
             
                 canvas.fillStyle = `rgb(${255*col[0]},${
                     255*col[1]}, ${255*col[2]})`;    
             canvas.fillRect(i, j, 256, 256);
         }
     }
+
     return image;
 }
 export { ray_trace};
