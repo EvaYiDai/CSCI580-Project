@@ -29,39 +29,12 @@ async function loadData(path) {
 async function initWebGL(gl, from, to, left, right,canvas) {
     try {
         const data = await loadData("data/teapotHW5.json");
+        
         //data processing
         var RxVal = parseFloat(document.getElementById("RxSlider").value);
-        var RxOutput = document.getElementById("RxValue");
-        RxOutput.innerHTML = RxVal;
-
         var RyVal = parseFloat(document.getElementById("RySlider").value);
-        var RyOutput = document.getElementById("RyValue");
-        RyOutput.innerHTML = RyVal;
-
         var RzVal = parseFloat(document.getElementById("RzSlider").value);
-        var RzOutput = document.getElementById("RzValue");
-        RzOutput.innerHTML = RzVal;
-
-        
-            //get values from sliders
-            var shineVal = parseFloat(
-                document.getElementById("shineSlider").value
-            );
-            var shineOutput = document.getElementById("shineValue");
-            shineOutput.innerHTML = shineVal;
-
-            var KaVal = parseFloat(document.getElementById("KaSlider").value);
-            var KaOutput = document.getElementById("KaValue");
-            KaOutput.innerHTML = KaVal;
-
-            var KdVal = parseFloat(document.getElementById("KdSlider").value);
-            var KdOutput = document.getElementById("KdValue");
-            KdOutput.innerHTML = KdVal;
-
-            var KsVal = parseFloat(document.getElementById("KsSlider").value);
-            var KsOutput = document.getElementById("KsValue");
-            KsOutput.innerHTML = KsVal;
-
+       
             const modelMat = mM(RxVal,RyVal,RzVal,1,1,1,0,0,0);
 
             const n = normalize(from.map((item, index) => item - to[index]));
@@ -127,19 +100,19 @@ async function initWebGL(gl, from, to, left, right,canvas) {
             
             }
             
-            const image = ray_trace(vertex, canvas,shineVal,KaVal,KdVal,KsVal); 
-            
+            const image = ray_trace(vertex, canvas); 
+            document
+            .getElementById("shineSlider")
+            .addEventListener("input", function () {
+                var shineVal = parseFloat(this.value);
+                
+            });
             document
                 .getElementById("RxSlider")
                 .addEventListener("input", function () {
                     var RxVal = parseFloat(this.value);
-                    RxOutput.innerHTML = RxVal;
                     var RyVal = parseFloat(document.getElementById("RySlider").value);
                     var RzVal = parseFloat(document.getElementById("RzSlider").value);
-                    var shineOutput = parseFloat(document.getElementById("shineValue").value);
-                    var KaVal = parseFloat(document.getElementById("kaSlider").value);
-                    var KdVal = parseFloat(document.getElementById("kdSlider").value);
-                    var KsVal = parseFloat(document.getElementById("ksSlider").value);
                     const modelMat = mM(RxVal,RyVal,RzVal,1,1,1,0,0,0);
                     const n = normalize(from.map((item, index) => item - to[index]));
             let u = normalize(cross([0, 1, 0], n));
@@ -204,20 +177,16 @@ async function initWebGL(gl, from, to, left, right,canvas) {
             
             }
             
-            const image = ray_trace(vertex, canvas,shineOutput,KaVal,KdVal,KsVal);
+            const image = ray_trace(vertex, canvas);
                     
                 });  
                 document
                 .getElementById("RySlider")
                 .addEventListener("input", function () {
                     var RyVal = parseFloat(this.value);
-                    RyOutput.innerHTML = RyVal;
+                 
                     var RxVal = parseFloat(document.getElementById("RxSlider").value);
                     var RzVal = parseFloat(document.getElementById("RzSlider").value);
-                    var shineOutput = parseFloat(document.getElementById("shineValue").value);
-                    var KaVal = parseFloat(document.getElementById("kaSlider").value);
-                    var KdVal = parseFloat(document.getElementById("kdSlider").value);
-                    var KsVal = parseFloat(document.getElementById("ksSlider").value);
                     const modelMat = mM(RxVal,RyVal,RzVal,1,1,1,0,0,0);
                     const n = normalize(from.map((item, index) => item - to[index]));
             let u = normalize(cross([0, 1, 0], n));
@@ -282,7 +251,7 @@ async function initWebGL(gl, from, to, left, right,canvas) {
             
             }
             
-            const image = ray_trace(vertex, canvas,shineOutput,KaVal,KdVal,KsVal);
+            const image = ray_trace(vertex, canvas);
                     
                 });
 
@@ -290,13 +259,9 @@ async function initWebGL(gl, from, to, left, right,canvas) {
                 .getElementById("RzSlider")
                 .addEventListener("input", function () {
                     var RzVal = parseFloat(this.value);
-                    RzOutput.innerHTML = RzVal;
+                   
                     var RxVal = parseFloat(document.getElementById("RxSlider").value);
                     var RyVal = parseFloat(document.getElementById("RySlider").value);
-                    var shineOutput = parseFloat(document.getElementById("shineValue").value);
-                    var KaVal = parseFloat(document.getElementById("kaSlider").value);
-                    var KdVal = parseFloat(document.getElementById("kdSlider").value);
-                    var KsVal = parseFloat(document.getElementById("ksSlider").value);
                     const modelMat = mM(RxVal,RyVal,RzVal,1,1,1,0,0,0);
                     const n = normalize(from.map((item, index) => item - to[index]));
             let u = normalize(cross([0, 1, 0], n));
@@ -361,7 +326,7 @@ async function initWebGL(gl, from, to, left, right,canvas) {
             
             }
             
-            const image = ray_trace(vertex, canvas,shineOutput,KaVal,KdVal,KsVal);
+            const image = ray_trace(vertex, canvas);
                     
                 }); 
         
