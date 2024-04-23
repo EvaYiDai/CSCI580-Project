@@ -191,6 +191,8 @@ async function initWebGL(gl, from, to, left, right) {
             const KaLocation = gl.getUniformLocation(shaderProgram, "Ka");
             const KdLocation = gl.getUniformLocation(shaderProgram, "Kd");
             const KsLocation = gl.getUniformLocation(shaderProgram, "Ks");
+            const nsLocation = gl.getUniformLocation(shaderProgram, "nScale");
+            const nmLocation = gl.getUniformLocation(shaderProgram, "nMix");
             if (shineLocation < 0)
                 console.log("Failed to get uniform location for...shine");
             if (KaLocation < 0)
@@ -199,6 +201,10 @@ async function initWebGL(gl, from, to, left, right) {
                 console.log("Failed to get uniform location for...Kd");
             if (KsLocation < 0)
                 console.log("Failed to get uniform location for...Ks");
+            if (nsLocation < 0)
+                console.log("Failed to get uniform location for...nScale");
+            if (nmLocation < 0)
+                console.log("Failed to get uniform location for...nMix");
             //get values from sliders
             var shineVal = parseFloat(
                 document.getElementById("shineSlider").value
@@ -218,10 +224,20 @@ async function initWebGL(gl, from, to, left, right) {
             var KsOutput = document.getElementById("KsValue");
             KsOutput.innerHTML = KsVal;
 
+            var nsVal = parseFloat(document.getElementById("nsSlider").value);
+            var nsOutput = document.getElementById("nsValue");
+            nsOutput.innerHTML = nsVal;
+
+            var nmVal = parseFloat(document.getElementById("nmSlider").value);
+            var nmOutput = document.getElementById("nmValue");
+            nmOutput.innerHTML = nmVal;
+
             gl.uniform1f(shineLocation, shineVal);
             gl.uniform1f(KaLocation, KaVal);
             gl.uniform1f(KdLocation, KdVal);
             gl.uniform1f(KsLocation, KsVal);
+            gl.uniform1f(nsLocation, nsVal);
+            gl.uniform1f(nmLocation, nmVal);
 
             const vI = gl.getAttribLocation(shaderProgram, "vertexPosition");
             const nI = gl.getAttribLocation(shaderProgram, "normalPosition");
@@ -252,6 +268,30 @@ async function initWebGL(gl, from, to, left, right) {
              */
             gl.useProgram(shaderProgram);
             gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+
+            document
+                .getElementById("nsSlider")
+                .addEventListener("input", function () {
+                    var nsVal = parseFloat(this.value);
+                    gl.uniform1f(nsLocation, nsVal);
+                    nsOutput.innerHTML = nsVal;
+                    gl.clearColor(0.5, 0.45, 0.4, 1.0);
+                    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                    gl.useProgram(shaderProgram);
+                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+                });
+
+            document
+                .getElementById("nmSlider")
+                .addEventListener("input", function () {
+                    var nmVal = parseFloat(this.value);
+                    gl.uniform1f(nmLocation, nmVal);
+                    nmOutput.innerHTML = nmVal;
+                    gl.clearColor(0.5, 0.45, 0.4, 1.0);
+                    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                    gl.useProgram(shaderProgram);
+                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+                });
 
             document
                 .getElementById("shineSlider")
