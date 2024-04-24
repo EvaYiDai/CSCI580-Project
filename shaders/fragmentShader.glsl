@@ -8,6 +8,8 @@ precision mediump float;
 #define LIGHT_INTENSITY .6
 in vec3 vNormal;
 in vec3 vPosition;
+in vec2 vUV;
+in float camZ;
 uniform float shine;
 uniform float Ka;
 uniform float Kd;
@@ -46,7 +48,11 @@ float snoise(vec2 v){
 }
 
 void main() {
-	float noise = snoise(nScale * vPosition.xy);
+  float z = 1./camZ;
+  vec2 pUV = vec2(vUV.x*z, vUV.y*z);
+	float pn = snoise(nScale * pUV);
+  float sn = snoise(vec2(pn, nScale * pUV.y));
+  float sn2 = snoise(vec2(sn, nScale * pUV.y));
 	vec3 L = normalize(vec3(0.687118, 0.29119054, 0.66564024));
 	vec3 V = normalize(-vPosition);
 	vec3 H = normalize(L + V);
@@ -59,6 +65,14 @@ void main() {
 	vec3 D = LIGHT_COLOR * LIGHT_INTENSITY * max(0., NL);
 	vec3 S = LIGHT_COLOR * LIGHT_INTENSITY * FACING * pow(max(0., NH), shine);
 
-	vec3 color = (nMix * noise) * MATERIAL_COLOR * (Ka * A + Kd * D) + Ks * S;
-	o = vec4(color, 1.);
+	vec3 color = MATERIAL_COLOR * (Ka * A + Kd * D) + Ks * S;
+
+  vec3 noiseA = pn * AMBIENT_COLOR * AMBIENT_INTENSITY;
+	vec3 noiseD = sn * LIGHT_COLOR * LIGHT_INTENSITY * max(0., NL);
+  vec3 noiseS = sn2 * LIGHT_COLOR * LIGHT_INTENSITY * FACING * pow(max(0., NH), shine);
+  vec3 colorN = MATERIAL_COLOR * (Ka * noiseA + Kd * noiseD) + Ks * noiseS;
+
+  vec3 colorF = nMix*colorN + (1.-nMix)*color;
+
+	o = vec4(colorF, 1.);
 }

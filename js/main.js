@@ -77,10 +77,13 @@ async function initWebGL(gl, from, to, left, right) {
         for (let i = 0; i < data.data.length; ++i) {
             vertex.push(...data.data[i].v0.v);
             vertex.push(...data.data[i].v0.n);
+            vertex.push(...data.data[i].v0.t);
             vertex.push(...data.data[i].v1.v);
             vertex.push(...data.data[i].v1.n);
+            vertex.push(...data.data[i].v1.t);
             vertex.push(...data.data[i].v2.v);
             vertex.push(...data.data[i].v2.n);
+            vertex.push(...data.data[i].v2.t);
         }
 
         const vertexShaderSource = await fetchShader(
@@ -241,6 +244,7 @@ async function initWebGL(gl, from, to, left, right) {
 
             const vI = gl.getAttribLocation(shaderProgram, "vertexPosition");
             const nI = gl.getAttribLocation(shaderProgram, "normalPosition");
+            const tI = gl.getAttribLocation(shaderProgram, "uvPosition");
             if (vI < 0)
                 console.log(
                     "Failed to get attribute location for...vertexPosition"
@@ -249,25 +253,24 @@ async function initWebGL(gl, from, to, left, right) {
                 console.log(
                     "Failed to get attribute location for...normalPosition"
                 );
+            if (tI < 0)
+                console.log(
+                    "Failed to get attribute location for...uvPosition"
+                );
 
-            const stride = 6 * Float32Array.BYTES_PER_ELEMENT;
+            const stride = 8 * Float32Array.BYTES_PER_ELEMENT;
             gl.enableVertexAttribArray(vI);
             gl.vertexAttribPointer(vI, 3, gl.FLOAT, false, stride, 0);
             gl.enableVertexAttribArray(nI);
-            gl.vertexAttribPointer(
-                nI,
-                3,
-                gl.FLOAT,
-                false,
-                stride,
-                3 * Float32Array.BYTES_PER_ELEMENT
-            );
+            gl.vertexAttribPointer(nI, 3, gl.FLOAT, false, stride, 3 * Float32Array.BYTES_PER_ELEMENT);
+            gl.enableVertexAttribArray(tI);
+            gl.vertexAttribPointer(tI, 2, gl.FLOAT, false, stride, 6 * Float32Array.BYTES_PER_ELEMENT);
 
             /**
              * Draw
              */
             gl.useProgram(shaderProgram);
-            gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+            gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 8);
 
             document
                 .getElementById("nsSlider")
@@ -278,7 +281,7 @@ async function initWebGL(gl, from, to, left, right) {
                     gl.clearColor(0.5, 0.45, 0.4, 1.0);
                     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                     gl.useProgram(shaderProgram);
-                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 8);
                 });
 
             document
@@ -290,7 +293,7 @@ async function initWebGL(gl, from, to, left, right) {
                     gl.clearColor(0.5, 0.45, 0.4, 1.0);
                     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                     gl.useProgram(shaderProgram);
-                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 8);
                 });
 
             document
@@ -302,7 +305,7 @@ async function initWebGL(gl, from, to, left, right) {
                     gl.clearColor(0.5, 0.45, 0.4, 1.0);
                     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                     gl.useProgram(shaderProgram);
-                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 8);
                 });
 
             document
@@ -314,7 +317,7 @@ async function initWebGL(gl, from, to, left, right) {
                     gl.clearColor(0.5, 0.45, 0.4, 1.0);
                     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                     gl.useProgram(shaderProgram);
-                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 8);
                 });
 
             document
@@ -326,7 +329,7 @@ async function initWebGL(gl, from, to, left, right) {
                     gl.clearColor(0.5, 0.45, 0.4, 1.0);
                     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                     gl.useProgram(shaderProgram);
-                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 8);
                 });
 
             document
@@ -338,7 +341,7 @@ async function initWebGL(gl, from, to, left, right) {
                     gl.clearColor(0.5, 0.45, 0.4, 1.0);
                     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                     gl.useProgram(shaderProgram);
-                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 8);
                 });
 
             document
@@ -361,7 +364,7 @@ async function initWebGL(gl, from, to, left, right) {
                     gl.clearColor(0.5, 0.45, 0.4, 1.0);
                     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                     gl.useProgram(shaderProgram);
-                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 8);
                 });
 
             document
@@ -384,7 +387,7 @@ async function initWebGL(gl, from, to, left, right) {
                     gl.clearColor(0.5, 0.45, 0.4, 1.0);
                     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                     gl.useProgram(shaderProgram);
-                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 8);
                 });
 
             document
@@ -407,7 +410,7 @@ async function initWebGL(gl, from, to, left, right) {
                     gl.clearColor(0.5, 0.45, 0.4, 1.0);
                     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                     gl.useProgram(shaderProgram);
-                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 6);
+                    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 8);
                 });
         }
     } catch (error) {
