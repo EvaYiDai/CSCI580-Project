@@ -20,7 +20,7 @@ function ray_color(ray, vertex) {
     {
         
         const normal = barycentricCoordinates(vertex,I,count);
-        const col = phong_shading(I.p,[1,0.5,1],ray.orig,count,normal)
+        const col = phong_shading(I.p,[10,5,0],ray.orig,count,normal)
         return col
     }
     return [0.2,0.2,0.2];
